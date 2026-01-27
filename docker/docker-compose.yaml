@@ -744,6 +744,8 @@ services:
     networks:
       - ssrf_proxy_network
       - default
+    ports:  # 添加这一行
+      - "3001:5001"  # 外部3000端口映射到内部5001端口
 
   # worker service
   # The Celery worker for processing all queues (dataset, workflow, mail, etc.)
@@ -843,6 +845,8 @@ services:
       ENABLE_WEBSITE_JINAREADER: ${ENABLE_WEBSITE_JINAREADER:-true}
       ENABLE_WEBSITE_FIRECRAWL: ${ENABLE_WEBSITE_FIRECRAWL:-true}
       ENABLE_WEBSITE_WATERCRAWL: ${ENABLE_WEBSITE_WATERCRAWL:-true}
+    ports:  # 添加这一行
+      - "3000:3000"  # 外部3001端口映射到内部3000端口
 
   # The PostgreSQL database.
   db_postgres:
