@@ -48,6 +48,29 @@ def load_user_from_request(request_from_flask_login):
                         account.current_tenant = tenant
                         return account
 
+    # Check for external API key authentication (for external system integration like Java)
+    if dify_config.EXTERNAL_API_KEY_ENABLE and auth_token:
+        external_api_key = dify_config.EXTERNAL_API_KEY
+        if external_api_key and external_api_key == auth_token:
+            # Get workspace ID from header or use default
+            workspace_id = request.headers.get("X-WORKSPACE-ID") or dify_config.EXTERNAL_API_DEFAULT_WORKSPACE_ID
+            if workspace_id:
+                tenant_account_join = (
+                    db.session.query(Tenant, TenantAccountJoin)
+                    .where(Tenant.id == workspace_id)
+                    .where(TenantAccountJoin.tenant_id == Tenant.id)
+                    .where(TenantAccountJoin.role == "owner")
+                    .one_or_none()
+                )
+                if tenant_account_join:
+                    tenant, ta = tenant_account_join
+                    account = db.session.query(Account).filter_by(id=ta.account_id).first()
+                    if account:
+                        account.current_tenant = tenant
+                        # Mark this request as external API request for CSRF bypass
+                        request.is_external_api_request = True
+                        return account
+
     if request.blueprint in {"console", "inner_api"}:
         if not auth_token:
             raise Unauthorized("Invalid Authorization token.")

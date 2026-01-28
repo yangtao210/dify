@@ -63,6 +63,24 @@ class SecurityConfig(BaseSettings):
         default=None,
     )
 
+    # External API Key for external system integration (e.g., Java systems)
+    EXTERNAL_API_KEY_ENABLE: bool = Field(
+        description="Whether to enable external api key for external system integration",
+        default=False,
+    )
+
+    EXTERNAL_API_KEY: str | None = Field(
+        description="External api key for external system integration. "
+        "External systems can use this key to call Dify console APIs.",
+        default=None,
+    )
+
+    EXTERNAL_API_DEFAULT_WORKSPACE_ID: str | None = Field(
+        description="Default workspace ID for external api key authentication. "
+        "If not specified, must provide X-WORKSPACE-ID header in request.",
+        default=None,
+    )
+
 
 class AppExecutionConfig(BaseSettings):
     """

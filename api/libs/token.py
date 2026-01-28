@@ -194,6 +194,15 @@ def check_csrf_token(request: Request, user_id: str):
         if auth_token and auth_token == dify_config.ADMIN_API_KEY:
             return
 
+    # Bypass CSRF check for external API key authentication
+    if dify_config.EXTERNAL_API_KEY_ENABLE:
+        auth_token = extract_access_token(request)
+        if auth_token and auth_token == dify_config.EXTERNAL_API_KEY:
+            return
+        # Also check the flag set by ext_login.py
+        if getattr(request, 'is_external_api_request', False):
+            return
+
     def _unauthorized():
         raise Unauthorized("CSRF token is missing or invalid.")
 
