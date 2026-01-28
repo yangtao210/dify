@@ -5,6 +5,10 @@
 # ==================================================================
 
 x-shared-env: &shared-api-worker-env
+  # External API Key for external system integration (e.g., Java systems)
+  EXTERNAL_API_KEY_ENABLE: ${EXTERNAL_API_KEY_ENABLE:-false}
+  EXTERNAL_API_KEY: ${EXTERNAL_API_KEY:-}
+  EXTERNAL_API_DEFAULT_WORKSPACE_ID: ${EXTERNAL_API_DEFAULT_WORKSPACE_ID:-}
   CONSOLE_API_URL: ${CONSOLE_API_URL:-}
   CONSOLE_WEB_URL: ${CONSOLE_WEB_URL:-}
   SERVICE_API_URL: ${SERVICE_API_URL:-}
